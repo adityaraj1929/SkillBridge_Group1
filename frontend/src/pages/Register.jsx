@@ -7,7 +7,9 @@ export default function Register() {
     name: "",
     email: "",
     password: "",
-    role: "volunteer", // default role
+    role: "volunteer",
+    location: "",
+    skills: "",
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -19,7 +21,16 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
+      const payload = {
+        ...form,
+        // only send skills if volunteer
+        skills:
+          form.role === "volunteer"
+            ? form.skills.split(",").map((s) => s.trim()).filter((s) => s)
+            : [],
+      };
+
+      await axios.post("http://localhost:5000/api/auth/register", payload);
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
@@ -28,66 +39,105 @@ export default function Register() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-200">
-      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-2xl">
-        <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">Register</h2>
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-        <form onSubmit={handleRegister} className="space-y-5">
+      <div className="w-full max-w-sm p-6 bg-white shadow-lg rounded-xl">
+        <h2 className="text-xl font-bold text-center text-gray-700 mb-4">Register</h2>
+        {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
+
+        <form onSubmit={handleRegister} className="space-y-3">
+          {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-600">Name</label>
+            <label className="block text-xs font-medium text-gray-600">Name</label>
             <input
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring focus:ring-green-300"
+              className="w-full px-3 py-1.5 mt-0.5 border rounded-lg focus:ring focus:ring-green-200 text-sm"
               placeholder="Enter your name"
               required
             />
           </div>
+
+          {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-600">Email</label>
+            <label className="block text-xs font-medium text-gray-600">Email</label>
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring focus:ring-green-300"
+              className="w-full px-3 py-1.5 mt-0.5 border rounded-lg focus:ring focus:ring-green-200 text-sm"
               placeholder="Enter your email"
               required
             />
           </div>
+
+          {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-600">Password</label>
+            <label className="block text-xs font-medium text-gray-600">Password</label>
             <input
               type="password"
               name="password"
               value={form.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring focus:ring-green-300"
+              className="w-full px-3 py-1.5 mt-0.5 border rounded-lg focus:ring focus:ring-green-200 text-sm"
               placeholder="Enter your password"
               required
             />
           </div>
+
+          {/* Role */}
           <div>
-            <label className="block text-sm font-medium text-gray-600">Role</label>
+            <label className="block text-xs font-medium text-gray-600">Role</label>
             <select
               name="role"
               value={form.role}
               onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring focus:ring-green-300"
+              className="w-full px-3 py-1.5 mt-0.5 border rounded-lg focus:ring focus:ring-green-200 text-sm"
             >
               <option value="volunteer">Volunteer</option>
               <option value="ngo">NGO</option>
             </select>
           </div>
+
+          {/* Location (for both) */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600">Location</label>
+            <input
+              type="text"
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+              className="w-full px-3 py-1.5 mt-0.5 border rounded-lg focus:ring focus:ring-green-200 text-sm"
+              placeholder="Enter your city"
+            />
+          </div>
+
+          {/* Skills (only for volunteers) */}
+          {form.role === "volunteer" && (
+            <div>
+              <label className="block text-xs font-medium text-gray-600">Skills</label>
+              <input
+                type="text"
+                name="skills"
+                value={form.skills}
+                onChange={handleChange}
+                className="w-full px-3 py-1.5 mt-0.5 border rounded-lg focus:ring focus:ring-green-200 text-sm"
+                placeholder="e.g. React, Node, Communication"
+              />
+            </div>
+          )}
+
+          {/* Submit */}
           <button
             type="submit"
-            className="w-full py-2 font-semibold text-white bg-green-500 rounded-lg hover:bg-green-600 transition"
+            className="w-full py-1.5 font-semibold text-white bg-green-500 rounded-lg hover:bg-green-600 transition text-sm"
           >
             Register
           </button>
         </form>
-        <p className="text-sm text-gray-600 mt-4 text-center">
+
+        <p className="text-xs text-gray-600 mt-3 text-center">
           Already have an account?{" "}
           <a href="/login" className="text-green-500 hover:underline">
             Login here

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -6,20 +6,35 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  // 🔹 If already logged in, redirect
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) navigate("/dashboard");
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
       const res = await axios.post("http://localhost:5000/api/auth/login", {
         email,
         password,
       });
+
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      navigate("/dashboard"); // redirect to dashboard after login
+
+      navigate("/dashboard"); // redirect after login
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -33,6 +48,7 @@ export default function Login() {
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
         <form onSubmit={handleLogin} className="space-y-5">
+          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-600">
               Email
@@ -47,18 +63,28 @@ export default function Login() {
             />
           </div>
 
+          {/* Password with toggle */}
           <div>
             <label className="block text-sm font-medium text-gray-600">
               Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring focus:ring-blue-300"
-              placeholder="Enter your password"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring focus:ring-blue-300 pr-10"
+                placeholder="Enter your password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-500 hover:text-gray-700 text-sm"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
 
           {/* Forgot password link */}
@@ -71,14 +97,19 @@ export default function Login() {
             </Link>
           </div>
 
+          {/* Submit button */}
           <button
             type="submit"
-            className="w-full py-2 font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition"
+            disabled={loading}
+            className={`w-full py-2 font-semibold text-white rounded-lg transition ${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+            }`}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
+        {/* Register link */}
         <p className="text-sm text-gray-600 mt-4 text-center">
           Don’t have an account?{" "}
           <Link to="/register" className="text-blue-500 hover:underline">
