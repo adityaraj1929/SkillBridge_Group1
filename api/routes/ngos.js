@@ -209,15 +209,32 @@ router.put('/applications/:applicationId/status', [
 
     // Update user's application status as well
     const User = require('../models/User');
-    await User.updateOne(
-      { 
-        'appliedOpportunities.opportunity': opportunity._id,
-        'appliedOpportunities.volunteer': application.volunteer 
-      },
-      { 
-        $set: { 'appliedOpportunities.$.status': status }
+    
+    // Find user and update their application
+    const user = await User.findOne({
+      _id: application.volunteer,
+      'appliedOpportunities.opportunity': opportunity._id
+    });
+
+    if (user) {
+      const appIndex = user.appliedOpportunities.findIndex(
+        app => app.opportunity.toString() === opportunity._id.toString()
+      );
+
+      if (appIndex !== -1) {
+        user.appliedOpportunities[appIndex].status = status;
+        user.appliedOpportunities[appIndex].feedback = feedback;
+        user.appliedOpportunities[appIndex].reviewedAt = new Date();
+        await user.save();
+
+        console.log('Updated user application status:', {
+          userId: user._id,
+          opportunityId: opportunity._id,
+          newStatus: status,
+          appIndex
+        });
       }
-    );
+    }
 
     res.json({ 
       message: 'Application status updated successfully',

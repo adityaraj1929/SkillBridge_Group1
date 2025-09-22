@@ -17,6 +17,7 @@ import {
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import ApplicationHistory from '../../components/Applications/ApplicationHistory';
 
 const Dashboard = () => {
   const { user, userType } = useAuth();
@@ -178,7 +179,9 @@ const Dashboard = () => {
 
       {/* Recommendations/Opportunities Section */}
       <Box sx={{ mt: 4 }}>
-        <Paper sx={{ p: 3 }}>
+        {userType === 'volunteer' && <ApplicationHistory />}
+
+        <Paper sx={{ p: 3, mt: 3 }}>
           <Typography variant="h6" gutterBottom>
             {userType === 'volunteer' ? 'Recommended for You' : 'Your Opportunities'}
           </Typography>

@@ -99,8 +99,14 @@ const UserSchema = new mongoose.Schema({
     },
     status: {
       type: String,
-      enum: ['Pending', 'Accepted', 'Rejected', 'Withdrawn'],
+      enum: ['Pending', 'Under Review', 'Accepted', 'Rejected'],
       default: 'Pending'
+    },
+    feedback: {
+      type: String
+    },
+    reviewedAt: {
+      type: Date
     }
   }],
   

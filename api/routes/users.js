@@ -173,7 +173,9 @@ router.get('/applications', auth, isVolunteer, async (req, res) => {
       _id: app._id,
       opportunity: app.opportunity,
       appliedAt: app.appliedAt,
-      status: app.status
+      status: app.status,
+      feedback: app.feedback,
+      reviewedAt: app.reviewedAt
     }));
 
     res.json({ applications });

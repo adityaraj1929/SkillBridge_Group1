@@ -40,16 +40,31 @@ const OpportunityDetail = () => {
   const [applyDialogOpen, setApplyDialogOpen] = useState(false);
   const [coverLetter, setCoverLetter] = useState('');
   const [applicationSuccess, setApplicationSuccess] = useState(false);
+  const [userApplication, setUserApplication] = useState(null);
 
+  // Fetch opportunity data initially and refresh every 30 seconds
   useEffect(() => {
     fetchOpportunity();
+    const intervalId = setInterval(fetchOpportunity, 30000);
+    return () => clearInterval(intervalId);
   }, [id]);
 
   const fetchOpportunity = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/opportunities/${id}`);
-      setOpportunity(response.data.opportunity);
+      const [opportunityResponse, applicationsResponse] = await Promise.all([
+        axios.get(`/api/opportunities/${id}`),
+        isAuthenticated && userType === 'volunteer' ? axios.get('/api/users/applications') : Promise.resolve(null)
+      ]);
+      
+      setOpportunity(opportunityResponse.data.opportunity);
+      
+      if (applicationsResponse) {
+        const existingApplication = applicationsResponse.data.applications.find(
+          app => app.opportunity._id === id
+        );
+        setUserApplication(existingApplication);
+      }
     } catch (error) {
       console.error('Error fetching opportunity:', error);
       setError('Failed to load opportunity details');
@@ -377,26 +392,39 @@ const OpportunityDetail = () => {
               </Typography>
             )}
 
-            <Button
-              variant="contained"
-              fullWidth
-              size="large"
-              disabled={!canApply}
-              onClick={() => setApplyDialogOpen(true)}
-              sx={{ mb: 2 }}
-            >
-              {!isAuthenticated ? 'Login to Apply' :
-               userType !== 'volunteer' ? 'Volunteers Only' :
-               canApply ? 'Apply Now' : 'Cannot Apply'}
-            </Button>
-
-            <Button
-              variant="outlined"
-              fullWidth
-              size="small"
-            >
-              Save for Later
-            </Button>
+            {userApplication ? (
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" gutterBottom>
+                  Application Status:
+                </Typography>
+                <Chip
+                  label={userApplication.status}
+                  color={
+                    userApplication.status === 'Accepted' ? 'success' :
+                    userApplication.status === 'Under Review' ? 'info' :
+                    userApplication.status === 'Pending' ? 'warning' :
+                    'default'
+                  }
+                  sx={{ width: '100%', height: 40 }}
+                />
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                  Applied on {formatDate(userApplication.appliedAt)}
+                </Typography>
+              </Box>
+            ) : (
+              <Button
+                variant="contained"
+                fullWidth
+                size="large"
+                disabled={!canApply}
+                onClick={() => setApplyDialogOpen(true)}
+                sx={{ mb: 2 }}
+              >
+                {!isAuthenticated ? 'Login to Apply' :
+                 userType !== 'volunteer' ? 'Volunteers Only' :
+                 canApply ? 'Apply Now' : 'Cannot Apply'}
+              </Button>
+            )}
           </Paper>
 
           {/* NGO Info */}
