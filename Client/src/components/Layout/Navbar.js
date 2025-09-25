@@ -58,6 +58,10 @@ const Navbar = () => {
   const menuItems = [
     { text: 'Home', path: '/', icon: null },
     { text: 'Opportunities', path: '/opportunities', icon: <Work /> },
+    { text: 'About Us', path: '/about', icon: null },
+    { text: 'Gallery', path: '/gallery', icon: null },
+    { text: 'FAQs', path: '/faqs', icon: null },
+    { text: 'Contact', path: '/contact', icon: null },
   ];
 
   const authMenuItems = isAuthenticated

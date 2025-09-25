@@ -120,9 +120,19 @@ const UserSchema = new mongoose.Schema({
     default: false
   },
 
-  // Password Reset
+  // Password Reset and OTP
   resetPasswordToken: String,
-  resetPasswordExpire: Date
+  resetPasswordExpire: Date,
+  otp: {
+    code: {
+      type: String,
+      default: null
+    },
+    expiresAt: {
+      type: Date,
+      default: null
+    }
+  }
 }, {
   timestamps: true
 });
@@ -160,6 +170,29 @@ UserSchema.methods.getResetPasswordToken = function() {
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
 
   return resetToken;
+};
+
+// Generate OTP
+UserSchema.methods.generateOTP = function() {
+  // Generate a 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Store the OTP and set expiry (10 minutes)
+  this.otp.code = otp;
+  this.otp.expiresAt = Date.now() + 10 * 60 * 1000;
+  
+  return otp;
+};
+
+// Verify OTP
+UserSchema.methods.verifyOTP = function(candidateOTP) {
+  return this.otp.code === candidateOTP && this.otp.expiresAt > Date.now();
+};
+
+// Clear OTP after use
+UserSchema.methods.clearOTP = function() {
+  this.otp.code = null;
+  this.otp.expiresAt = null;
 };
 
 // Get full name virtual

@@ -142,9 +142,19 @@ const NGOSchema = new mongoose.Schema({
     default: 0
   },
 
-  // Password Reset
+  // Password Reset and OTP
   resetPasswordToken: String,
-  resetPasswordExpire: Date
+  resetPasswordExpire: Date,
+  otp: {
+    code: {
+      type: String,
+      default: null
+    },
+    expiresAt: {
+      type: Date,
+      default: null
+    }
+  }
 }, {
   timestamps: true
 });
@@ -182,6 +192,29 @@ NGOSchema.methods.getResetPasswordToken = function() {
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
 
   return resetToken;
+};
+
+// Generate OTP
+NGOSchema.methods.generateOTP = function() {
+  // Generate a 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Store the OTP and set expiry (10 minutes)
+  this.otp.code = otp;
+  this.otp.expiresAt = Date.now() + 10 * 60 * 1000;
+  
+  return otp;
+};
+
+// Verify OTP
+NGOSchema.methods.verifyOTP = function(candidateOTP) {
+  return this.otp.code === candidateOTP && this.otp.expiresAt > Date.now();
+};
+
+// Clear OTP after use
+NGOSchema.methods.clearOTP = function() {
+  this.otp.code = null;
+  this.otp.expiresAt = null;
 };
 
 module.exports = mongoose.model('NGO', NGOSchema);
