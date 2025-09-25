@@ -19,6 +19,10 @@ import CreateOpportunity from './pages/Opportunities/CreateOpportunity';
 import ManageOpportunities from './pages/NGO/ManageOpportunities';
 import Profile from './pages/Profile/Profile';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import AboutUs from './pages/AboutUs/AboutUs';
+import FAQs from './pages/FAQs/FAQs';
+import Gallery from './pages/Gallery/Gallery';
+import ContactUs from './pages/Contact/ContactUs';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -97,6 +101,10 @@ function App() {
                 <Route path="/register/ngo" element={<RegisterNGO />} />
                 <Route path="/opportunities" element={<Opportunities />} />
                 <Route path="/opportunities/:id" element={<OpportunityDetail />} />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/faqs" element={<FAQs />} />
+                <Route path="/gallery" element={<Gallery />} />
+                <Route path="/contact" element={<ContactUs />} />
 
                 {/* Protected Routes */}
                 <Route path="/dashboard" element={
