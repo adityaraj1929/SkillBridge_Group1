@@ -31,6 +31,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/ngos', require('./routes/ngos'));
 app.use('/api/opportunities', require('./routes/opportunities'));
+app.use('/api/chats', require('./routes/chats'));
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
@@ -43,6 +44,49 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+// Socket.io setup
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+
+// Store active connections
+const activeConnections = new Map();
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  // Handle user joining with their ID
+  socket.on('join', ({ userId, userType }) => {
+    activeConnections.set(userId, { socket, userType });
+    socket.userId = userId;
+    socket.userType = userType;
+    console.log(`User ${userId} (${userType}) joined`);
+  });
+
+  // Handle private messages
+  socket.on('private-message', ({ to, message }) => {
+    const recipientConnection = activeConnections.get(to);
+    if (recipientConnection) {
+      recipientConnection.socket.emit('private-message', {
+        from: socket.userId,
+        message,
+        timestamp: new Date()
+      });
+    }
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    if (socket.userId) {
+      activeConnections.delete(socket.userId);
+      console.log(`User ${socket.userId} disconnected`);
+    }
+  });
 });

@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { AuthProvider } from './contexts/AuthContext';
+import { ChatProvider } from './contexts/ChatContext';
 import Navbar from './components/Layout/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Auth/Login';
@@ -23,6 +24,7 @@ import AboutUs from './pages/AboutUs/AboutUs';
 import FAQs from './pages/FAQs/FAQs';
 import Gallery from './pages/Gallery/Gallery';
 import ContactUs from './pages/Contact/ContactUs';
+import Messages from './pages/Messages/Messages';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -89,7 +91,8 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
-          <Router>
+          <ChatProvider>
+            <Router>
             <div className="App">
               <Navbar />
               <Routes>
@@ -127,9 +130,15 @@ function App() {
                     <ManageOpportunities />
                   </ProtectedRoute>
                 } />
+                <Route path="/messages" element={
+                  <ProtectedRoute>
+                    <Messages />
+                  </ProtectedRoute>
+                } />
               </Routes>
             </div>
           </Router>
+          </ChatProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -23,6 +23,7 @@ import {
   Work,
   Person,
   ExitToApp,
+  Message,
 } from '@mui/icons-material';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -64,6 +65,10 @@ const Navbar = () => {
     { text: 'Contact', path: '/contact', icon: null },
   ];
 
+  const authenticatedMenuItems = isAuthenticated ? [
+    { text: 'Messages', path: '/messages', icon: <Message /> }
+  ] : [];
+
   const authMenuItems = isAuthenticated
     ? [
         { text: 'Dashboard', path: '/dashboard', icon: <Dashboard /> },
@@ -77,7 +82,7 @@ const Navbar = () => {
 
   const renderDesktopMenu = () => (
     <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
-      {menuItems.map((item) => (
+      {[...menuItems, ...authenticatedMenuItems].map((item) => (
         <Button
           key={item.text}
           color="inherit"
@@ -87,6 +92,7 @@ const Navbar = () => {
             backgroundColor: location.pathname === item.path ? 'rgba(255,255,255,0.1)' : 'transparent',
           }}
         >
+          {item.icon && <Box sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>{item.icon}</Box>}
           {item.text}
         </Button>
       ))}
