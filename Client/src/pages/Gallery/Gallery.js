@@ -15,61 +15,43 @@ import CloseIcon from '@mui/icons-material/Close';
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Sample gallery items - replace with your actual images and descriptions
+  // Gallery items with local images
   const galleryItems = [
     {
       id: 1,
       title: "Education Support Program",
       description: "Volunteers helping children with their studies",
-      image: "https://source.unsplash.com/800x600/?education"
+      image: "/images/gallery/education.jpg"
     },
     {
       id: 2,
       title: "Environmental Clean-up Drive",
       description: "Community effort to clean local beaches",
-      image: "https://source.unsplash.com/800x600/?environment"
+      image: "/images/gallery/environment.jpg"
     },
     {
       id: 3,
       title: "Healthcare Camp",
       description: "Free medical check-up camp for underprivileged",
-      image: "https://source.unsplash.com/800x600/?healthcare"
+      image: "/images/gallery/healthcare.jpg"
     },
     {
       id: 4,
       title: "Skill Development Workshop",
       description: "Teaching digital skills to youth",
-      image: "https://source.unsplash.com/800x600/?workshop"
+      image: "/images/gallery/workshop.jpg"
     },
     {
       id: 5,
       title: "Food Distribution Drive",
       description: "Providing meals to those in need",
-      image: "https://source.unsplash.com/800x600/?food,charity"
+      image: "/images/gallery/food.jpg"
     },
     {
       id: 6,
-      title: "Tree Plantation Initiative",
-      description: "Making our community greener",
-      image: "https://source.unsplash.com/800x600/?tree,planting"
-    },
-    {
-      id: 7,
-      title: "Women Empowerment Program",
-      description: "Skills training for women entrepreneurs",
-      image: "https://source.unsplash.com/800x600/?women,business"
-    },
-    {
-      id: 8,
-      title: "Animal Welfare Project",
-      description: "Caring for street animals",
-      image: "https://source.unsplash.com/800x600/?animal,care"
-    },
-    {
-      id: 9,
-      title: "Tech Education",
-      description: "Teaching coding to students",
-      image: "https://source.unsplash.com/800x600/?coding,education"
+      title: "Community Support",
+      description: "Making our community stronger together",
+      image: "/images/gallery/community.jpg"
     }
   ];
 

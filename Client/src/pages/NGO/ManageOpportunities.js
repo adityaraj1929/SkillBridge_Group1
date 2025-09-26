@@ -54,6 +54,14 @@ const ManageOpportunities = () => {
   const [feedback, setFeedback] = useState('');
   const [updating, setUpdating] = useState(false);
 
+  useEffect(() => {
+    if (tabValue === 0) {
+      fetchOpportunities();
+    } else {
+      fetchApplications();
+    }
+  }, [tabValue]);
+
   // Redirect if not NGO
   if (userType !== 'ngo') {
     return (
@@ -62,14 +70,6 @@ const ManageOpportunities = () => {
       </Container>
     );
   }
-
-  useEffect(() => {
-    if (tabValue === 0) {
-      fetchOpportunities();
-    } else {
-      fetchApplications();
-    }
-  }, [tabValue]);
 
   const fetchOpportunities = async () => {
     try {
