@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import ChatWindow from '../../components/Chat/ChatWindow';
 import {
   Container,
   Typography,
@@ -21,18 +22,33 @@ import {
 import {
   LocationOn,
   Schedule,
-  Work,
   People,
   CalendarToday,
   Business,
+
 } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'Accepted':
+      return 'success';
+    case 'Under Review':
+      return 'info';
+    case 'Rejected':
+      return 'error';
+    case 'Pending':
+      return 'warning';
+    default:
+      return 'default';
+  }
+};
+
 const OpportunityDetail = () => {
   const { id } = useParams();
-  const { user, userType, isAuthenticated } = useAuth();
+  const { userType, isAuthenticated } = useAuth();
   const [opportunity, setOpportunity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -42,14 +58,8 @@ const OpportunityDetail = () => {
   const [applicationSuccess, setApplicationSuccess] = useState(false);
   const [userApplication, setUserApplication] = useState(null);
 
-  // Fetch opportunity data initially and refresh every 30 seconds
-  useEffect(() => {
-    fetchOpportunity();
-    const intervalId = setInterval(fetchOpportunity, 30000);
-    return () => clearInterval(intervalId);
-  }, [id]);
 
-  const fetchOpportunity = async () => {
+  const fetchOpportunity = useCallback(async () => {
     try {
       setLoading(true);
       const [opportunityResponse, applicationsResponse] = await Promise.all([
@@ -71,7 +81,14 @@ const OpportunityDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, isAuthenticated, userType]);
+
+  // Fetch opportunity data initially and refresh every 30 seconds
+  useEffect(() => {
+    fetchOpportunity();
+    const intervalId = setInterval(fetchOpportunity, 30000);
+    return () => clearInterval(intervalId);
+  }, [fetchOpportunity]);
 
   const handleApply = async () => {
     if (!isAuthenticated) {
@@ -129,55 +146,7 @@ const OpportunityDetail = () => {
     );
   }
 
-  // Mock data structure for backward compatibility
-  const mockOpportunity = {
-    _id: id,
-    title: 'Web Development for Education Platform',
-    description: 'Help us build an online learning platform for underprivileged children. We need skilled developers to create responsive web applications using modern technologies. This is a great opportunity to use your technical skills for social good while gaining experience in educational technology.\n\nYou will be working with our team to develop features that will directly impact the learning experience of thousands of children. The platform will include interactive lessons, progress tracking, and gamification elements to make learning engaging and effective.',
-    category: 'Technology',
-    location: { 
-      type: 'Remote', 
-      address: { 
-        city: 'Mumbai', 
-        state: 'Maharashtra',
-        street: '123 Tech Park',
-        zipCode: '400001',
-        country: 'India'
-      } 
-    },
-    duration: '3 months',
-    timeCommitment: 'Part-time',
-    skillsRequired: [
-      { name: 'React', level: 'Intermediate', description: 'Building user interfaces' },
-      { name: 'Node.js', level: 'Beginner', description: 'Backend development' },
-      { name: 'MongoDB', level: 'Beginner', description: 'Database management' }
-    ],
-    requirements: {
-      minAge: 18,
-      education: 'Bachelor\'s Degree',
-      experience: '1-2 years',
-      languages: ['English', 'Hindi'],
-      additionalRequirements: 'Must have own laptop and reliable internet connection'
-    },
-    benefits: ['Certificate', 'Letter of Recommendation', 'Skill Development', 'Networking'],
-    ngo: {
-      _id: 'ngo1',
-      organizationName: 'Education for All',
-      description: 'We are dedicated to providing quality education to underprivileged children across India.',
-      logo: '',
-      address: { city: 'Mumbai', state: 'Maharashtra' },
-      website: 'https://educationforall.org',
-      focusAreas: ['Education', 'Technology'],
-      establishedYear: 2015
-    },
-    startDate: '2024-02-01',
-    endDate: '2024-05-01',
-    applicationDeadline: '2024-01-15',
-    maxVolunteers: 5,
-    currentVolunteers: 2,
-    views: 156,
-    status: 'Active'
-  };
+
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -394,19 +363,27 @@ const OpportunityDetail = () => {
 
             {userApplication ? (
               <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" gutterBottom>
-                  Application Status:
+                <Typography variant="h6" gutterBottom>
+                  Application Status
                 </Typography>
-                <Chip
-                  label={userApplication.status}
-                  color={
-                    userApplication.status === 'Accepted' ? 'success' :
-                    userApplication.status === 'Under Review' ? 'info' :
-                    userApplication.status === 'Pending' ? 'warning' :
-                    'default'
-                  }
-                  sx={{ width: '100%', height: 40 }}
-                />
+                <Box sx={{ mb: 2 }}>
+                  <Chip
+                    label={userApplication.status}
+                    color={getStatusColor(userApplication.status)}
+                    sx={{ mb: 1 }}
+                  />
+                  {userApplication.feedback && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      Feedback: {userApplication.feedback}
+                    </Typography>
+                  )}
+                </Box>
+                
+                {userApplication.status === 'Accepted' && (
+                  <Box sx={{ mt: 2 }}>
+                    <ChatWindow />
+                  </Box>
+                )}
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
                   Applied on {formatDate(userApplication.appliedAt)}
                 </Typography>

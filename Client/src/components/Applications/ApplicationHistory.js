@@ -12,14 +12,21 @@ import {
   Chip,
   CircularProgress,
   Alert,
-  Tooltip
+  Tooltip,
+  IconButton,
+  Button
 } from '@mui/material';
+import ChatIcon from '@mui/icons-material/Chat';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useChat } from '../../contexts/ChatContext';
 
 const ApplicationHistory = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { selectPartner } = useChat();
 
   const fetchApplications = async () => {
     try {
@@ -49,6 +56,29 @@ const ApplicationHistory = () => {
     const intervalId = setInterval(fetchApplications, 30000); // Refresh every 30 seconds
     return () => clearInterval(intervalId);
   }, []);
+
+  const handleChatClick = (application) => {
+    // Only allow chat for accepted applications
+    if (application.status.toLowerCase() !== 'accepted') {
+      return;
+    }
+
+    // Create chat partner object
+    const ngo = application.opportunity.ngo;
+    const chatPartner = {
+      _id: ngo._id,
+      name: ngo.organizationName,
+      opportunities: [{
+        opportunityId: application.opportunity._id,
+        opportunityTitle: application.opportunity.title,
+        applicationId: application._id
+      }]
+    };
+
+    // Select the chat partner and navigate to chat
+    selectPartner(chatPartner);
+    navigate('/chat');
+  };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -107,6 +137,7 @@ const ApplicationHistory = () => {
                 <TableCell>Applied Date</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Feedback</TableCell>
+                <TableCell align="center">Message</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -162,6 +193,23 @@ const ApplicationHistory = () => {
                         {application.status === 'Pending' ? 'Awaiting review' : 'No feedback provided'}
                       </Typography>
                     )}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Tooltip title={
+                      application.status.toLowerCase() === 'accepted' 
+                        ? "Message NGO" 
+                        : "Chat available after application is accepted"
+                    }>
+                      <span>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleChatClick(application)}
+                          disabled={application.status.toLowerCase() !== 'accepted'}
+                        >
+                          <ChatIcon />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}

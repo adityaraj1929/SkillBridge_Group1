@@ -1,35 +1,25 @@
 const mongoose = require('mongoose');
 
-const messageSchema = new mongoose.Schema({
+const ChatMessageSchema = new mongoose.Schema({
   senderId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     refPath: 'senderModel'
-  },
-  senderModel: {
-    type: String,
-    required: true,
-    enum: ['User', 'NGO']
   },
   receiverId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     refPath: 'receiverModel'
   },
-  receiverModel: {
+  content: {
     type: String,
     required: true,
-    enum: ['User', 'NGO']
+    trim: true
   },
   opportunityId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Opportunity',
     required: true
-  },
-  content: {
-    type: String,
-    required: true,
-    trim: true
   },
   timestamp: {
     type: Date,
@@ -38,14 +28,17 @@ const messageSchema = new mongoose.Schema({
   read: {
     type: Boolean,
     default: false
+  },
+  senderModel: {
+    type: String,
+    required: true,
+    enum: ['User', 'NGO']
+  },
+  receiverModel: {
+    type: String,
+    required: true,
+    enum: ['User', 'NGO']
   }
 });
 
-// Create indexes for better query performance
-messageSchema.index({ senderId: 1, receiverId: 1 });
-messageSchema.index({ timestamp: 1 });
-messageSchema.index({ opportunityId: 1 });
-
-const Message = mongoose.model('Message', messageSchema);
-
-module.exports = Message;
+module.exports = mongoose.model('ChatMessage', ChatMessageSchema);

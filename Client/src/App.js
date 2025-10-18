@@ -24,7 +24,7 @@ import AboutUs from './pages/AboutUs/AboutUs';
 import FAQs from './pages/FAQs/FAQs';
 import Gallery from './pages/Gallery/Gallery';
 import ContactUs from './pages/Contact/ContactUs';
-import Messages from './pages/Messages/Messages';
+import Chat from './pages/Chat/Chat';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -132,7 +132,7 @@ function App() {
                 } />
                 <Route path="/messages" element={
                   <ProtectedRoute>
-                    <Messages />
+                    <Chat />
                   </ProtectedRoute>
                 } />
               </Routes>

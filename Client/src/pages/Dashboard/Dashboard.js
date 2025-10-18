@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
@@ -8,6 +8,7 @@ import {
   Card,
   CardContent,
   Button,
+  CircularProgress,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -21,6 +22,32 @@ import ApplicationHistory from '../../components/Applications/ApplicationHistory
 
 const Dashboard = () => {
   const { user, userType } = useAuth();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (userType === 'ngo') {
+      const fetchNGOStats = async () => {
+        try {
+          setLoading(true);
+          const response = await fetch('/api/dashboard/ngo/stats', {
+            headers: {
+              'x-auth-token': localStorage.getItem('token')
+            }
+          });
+          const data = await response.json();
+          if (data.success) {
+            setStats(data.stats);
+          }
+        } catch (error) {
+          console.error('Error fetching NGO stats:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchNGOStats();
+    }
+  }, [userType]);
 
   const volunteerStats = [
     {
@@ -43,28 +70,36 @@ const Dashboard = () => {
     },
   ];
 
-  const ngoStats = [
+  const ngoStats = stats ? [
     {
       title: 'Total Opportunities',
-      value: user?.totalOpportunities || 0,
+      value: stats.totalOpportunities,
       icon: <Work color="primary" />,
       color: 'primary.main',
     },
     {
       title: 'Active Opportunities',
-      value: user?.opportunities?.filter(opp => opp.status === 'Active')?.length || 0,
+      value: stats.activeOpportunities,
       icon: <TrendingUp color="secondary" />,
       color: 'secondary.main',
     },
     {
       title: 'Total Volunteers',
-      value: user?.totalVolunteers || 0,
+      value: stats.totalAcceptedVolunteers,
       icon: <People color="success" />,
       color: 'success.main',
     },
-  ];
+  ] : [];
 
-  const stats = userType === 'volunteer' ? volunteerStats : ngoStats;
+  const displayStats = userType === 'volunteer' ? volunteerStats : ngoStats;
+
+  if (userType === 'ngo' && loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -83,7 +118,7 @@ const Dashboard = () => {
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {stats.map((stat, index) => (
+        {displayStats.map((stat, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Card>
               <CardContent>

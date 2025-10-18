@@ -5,11 +5,18 @@ const NGO = require('../models/NGO');
 // Middleware to verify JWT token
 const auth = async (req, res, next) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    let token = req.header('Authorization');
     
     if (!token) {
       return res.status(401).json({ message: 'No token provided, authorization denied' });
     }
+
+    // Check if token has Bearer prefix
+    if (token.startsWith('Bearer ')) {
+      token = token.slice(7, token.length);
+    }
+
+    console.log('Processing token:', token);
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
