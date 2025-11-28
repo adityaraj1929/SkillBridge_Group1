@@ -83,7 +83,7 @@ const Home = () => {
                 variant="h6"
                 sx={{ mb: 4, opacity: 0.9, lineHeight: 1.6 }}
               >
-                Connect skilled volunteers with NGOs to create meaningful impact. 
+                Connect skilled volunteers with NGOs to create meaningful impact.
                 Find opportunities that match your expertise and passion.
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -109,34 +109,75 @@ const Home = () => {
                 </Button>
               </Box>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Container maxWidth="lg" sx={{ mt: 6 }}>
               <Box
                 sx={{
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  height: { xs: 200, md: 400 },
+                  flexWrap: 'wrap',
+                  gap: 4, // equal spacing between all boxes
                 }}
               >
+                {/* Box 1 */}
                 <Paper
                   elevation={8}
                   sx={{
                     p: 4,
+                    width: { xs: '100%', sm: '300px' },
                     borderRadius: 4,
                     background: 'rgba(255,255,255,0.1)',
-                    backdropFilter: 'blur(10px)',
                     border: '1px solid rgba(255,255,255,0.2)',
+                    textAlign: 'center',
+                    backdropFilter: 'blur(10px)',
                   }}
                 >
-                  <Typography variant="h4" align="center" gutterBottom>
-                    🤝
+                  <Typography variant="h4" gutterBottom>🌍</Typography>
+                  <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                    Empower Communities with Your Skills
                   </Typography>
-                  <Typography variant="h6" align="center">
-                    Making Impact Together
+                </Paper>
+
+                {/* Box 2 */}
+                <Paper
+                  elevation={8}
+                  sx={{
+                    p: 4,
+                    width: { xs: '100%', sm: '300px' },
+                    borderRadius: 4,
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    textAlign: 'center',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                >
+                  <Typography variant="h4" gutterBottom>🤝</Typography>
+                  <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                    Collaborate with Purpose-Driven NGOs
+                  </Typography>
+                </Paper>
+
+                {/* Box 3 */}
+                <Paper
+                  elevation={8}
+                  sx={{
+                    p: 4,
+                    width: { xs: '100%', sm: '300px' },
+                    borderRadius: 4,
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    textAlign: 'center',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                >
+                  <Typography variant="h4" gutterBottom>🚀</Typography>
+                  <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                    Build Impact & Grow Your Experience
                   </Typography>
                 </Paper>
               </Box>
-            </Grid>
+            </Container>
+
           </Grid>
         </Container>
       </Box>
