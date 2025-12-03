@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   ListItemAvatar,
   Avatar,
@@ -61,33 +62,33 @@ const ChatList = ({ onSelectChat }) => {
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {chatPartners.map((partner, index) => (
           <React.Fragment key={partner.id}>
-            <ListItem
-              button
-              onClick={() => onSelectChat({
-                partnerId: partner.id,
-                partnerName: partner.name,
-                opportunityId: partner.opportunityId
-              })}
-              alignItems="flex-start"
-            >
-              <ListItemAvatar>
-                <Avatar>
-                  <Person />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={partner.name}
-                secondary={
-                  <Typography
-                    sx={{ display: 'inline' }}
-                    component="span"
-                    variant="body2"
-                    color="text.secondary"
-                  >
-                    {partner.opportunityTitle}
-                  </Typography>
-                }
-              />
+            <ListItem disablePadding alignItems="flex-start">
+              <ListItemButton
+                onClick={() => onSelectChat({
+                  partnerId: partner.id,
+                  partnerName: partner.name,
+                  opportunityId: partner.opportunityId
+                })}
+              >
+                <ListItemAvatar>
+                  <Avatar>
+                    <Person />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={partner.name}
+                  secondary={
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="body2"
+                      color="text.secondary"
+                    >
+                      {partner.opportunityTitle}
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
             </ListItem>
             {index < chatPartners.length - 1 && <Divider variant="inset" component="li" />}
           </React.Fragment>

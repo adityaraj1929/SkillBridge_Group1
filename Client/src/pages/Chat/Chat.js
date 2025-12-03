@@ -6,6 +6,7 @@ import {
   Typography,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   ListItemAvatar,
   Avatar,
@@ -62,42 +63,43 @@ const Chat = () => {
           console.log('Rendering chat partner:', partner);
           return (
             <React.Fragment key={partner._id}>
-              <ListItem
-                button
-                selected={selectedPartner?._id === partner._id}
-                onClick={() => {
-                  console.log('Selecting chat partner:', partner);
-                  selectPartner(partner);
-                }}
-                sx={{
-                  '&.Mui-selected': {
-                    backgroundColor: 'primary.light',
-                    '&:hover': {
-                      backgroundColor: 'primary.light',
-                    },
-                  },
-                }}
-              >
-                <ListItemAvatar>
-                  <Avatar src={partner.logo || partner.profilePicture}>
-                    {(partner.name || '?')[0]}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={partner.name}
-                  secondary={
-                    <React.Fragment>
-                      <Typography component="span" variant="body2">
-                        {partner.opportunities && partner.opportunities.length > 0
-                          ? `${partner.opportunities.length} active ${partner.opportunities.length === 1 ? 'opportunity' : 'opportunities'}`
-                          : 'No active opportunities'}
-                      </Typography>
-                    </React.Fragment>
-                  }
-                  primaryTypographyProps={{
-                    color: selectedPartner?._id === partner._id ? 'primary' : 'inherit',
+              <ListItem disablePadding>
+                <ListItemButton
+                  selected={selectedPartner?._id === partner._id}
+                  onClick={() => {
+                    console.log('Selecting chat partner:', partner);
+                    selectPartner(partner);
                   }}
-                />
+                  sx={{
+                    '&.Mui-selected': {
+                      backgroundColor: 'primary.light',
+                      '&:hover': {
+                        backgroundColor: 'primary.light',
+                      },
+                    },
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar src={partner.logo || partner.profilePicture}>
+                      {(partner.name || '?')[0]}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={partner.name}
+                    secondary={
+                      <React.Fragment>
+                        <Typography component="span" variant="body2">
+                          {partner.opportunities && partner.opportunities.length > 0
+                            ? `${partner.opportunities.length} active ${partner.opportunities.length === 1 ? 'opportunity' : 'opportunities'}`
+                            : 'No active opportunities'}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                    primaryTypographyProps={{
+                      color: selectedPartner?._id === partner._id ? 'primary' : 'inherit',
+                    }}
+                  />
+                </ListItemButton>
               </ListItem>
               <Divider variant="inset" component="li" />
             </React.Fragment>

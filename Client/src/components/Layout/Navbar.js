@@ -12,6 +12,7 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   useTheme,
   useMediaQuery,
@@ -171,35 +172,36 @@ const Navbar = () => {
         </Typography>
         <List>
           {[...menuItems, ...authMenuItems].map((item) => (
-            <ListItem
-              button
-              key={item.text}
-              component={Link}
-              to={item.path}
-              onClick={handleDrawerToggle}
-              sx={{
-                backgroundColor: location.pathname === item.path ? 'rgba(25,118,210,0.1)' : 'transparent',
-                borderRadius: 1,
-                mb: 0.5,
-              }}
-            >
-              {item.icon && <Box sx={{ mr: 2 }}>{item.icon}</Box>}
-              <ListItemText primary={item.text} />
+            <ListItem key={item.text} disablePadding>
+              <ListItemButton
+                component={Link}
+                to={item.path}
+                onClick={handleDrawerToggle}
+                sx={{
+                  backgroundColor: location.pathname === item.path ? 'rgba(25,118,210,0.1)' : 'transparent',
+                  borderRadius: 1,
+                  mb: 0.5,
+                }}
+              >
+                {item.icon && <Box sx={{ mr: 2 }}>{item.icon}</Box>}
+                <ListItemText primary={item.text} />
+              </ListItemButton>
             </ListItem>
           ))}
           {isAuthenticated && (
-            <ListItem
-              button
-              onClick={() => {
-                handleLogout();
-                handleDrawerToggle();
-              }}
-              sx={{ borderRadius: 1, mb: 0.5 }}
-            >
-              <Box sx={{ mr: 2 }}>
-                <ExitToApp />
-              </Box>
-              <ListItemText primary="Logout" />
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  handleLogout();
+                  handleDrawerToggle();
+                }}
+                sx={{ borderRadius: 1, mb: 0.5 }}
+              >
+                <Box sx={{ mr: 2 }}>
+                  <ExitToApp />
+                </Box>
+                <ListItemText primary="Logout" />
+              </ListItemButton>
             </ListItem>
           )}
         </List>

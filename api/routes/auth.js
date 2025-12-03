@@ -11,10 +11,17 @@ const router = express.Router();
 
 // Generate JWT Token
 const generateToken = (id, userType) => {
+  // Ensure expiresIn is always a valid value for jsonwebtoken
+  const rawExpiresIn = process.env.JWT_EXPIRE;
+  const expiresIn =
+    rawExpiresIn && rawExpiresIn !== 'undefined' && rawExpiresIn !== 'null'
+      ? rawExpiresIn
+      : '7d'; // sensible default
+
   return jwt.sign(
     { id, userType },
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRE }
+    { expiresIn }
   );
 };
 

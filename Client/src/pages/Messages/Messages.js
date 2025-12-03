@@ -6,6 +6,7 @@ import {
   Paper,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   ListItemAvatar,
   Avatar,
@@ -78,29 +79,30 @@ const Messages = () => {
             <List>
               {conversations.map((conversation) => (
                 <React.Fragment key={conversation._id}>
-                  <ListItem
-                    button
-                    selected={selectedChat?._id === conversation._id}
-                    onClick={() => setSelectedChat(conversation)}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Person />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={getParticipantName(conversation)}
-                      secondary={conversation.opportunity.title}
-                    />
-                    {conversation.unreadCount > 0 && (
-                      <Badge
-                        badgeContent={conversation.unreadCount}
-                        color="primary"
-                        sx={{ ml: 2 }}
-                      >
-                        <MessageIcon color="action" />
-                      </Badge>
-                    )}
+                  <ListItem disablePadding>
+                    <ListItemButton
+                      selected={selectedChat?._id === conversation._id}
+                      onClick={() => setSelectedChat(conversation)}
+                    >
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Person />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={getParticipantName(conversation)}
+                        secondary={conversation.opportunity.title}
+                      />
+                      {conversation.unreadCount > 0 && (
+                        <Badge
+                          badgeContent={conversation.unreadCount}
+                          color="primary"
+                          sx={{ ml: 2 }}
+                        >
+                          <MessageIcon color="action" />
+                        </Badge>
+                      )}
+                    </ListItemButton>
                   </ListItem>
                   <Divider variant="inset" component="li" />
                 </React.Fragment>

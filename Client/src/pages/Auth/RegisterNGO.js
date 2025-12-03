@@ -49,6 +49,29 @@ const RegisterNGO = () => {
     trigger,
   } = useForm({
     defaultValues: {
+      organizationName: '',
+      email: '',
+      password: '',
+      registrationNumber: '',
+      establishedYear: '',
+      organizationType: '',
+      phone: '',
+      website: '',
+      address: {
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: 'India',
+      },
+      contactPerson: {
+        name: '',
+        designation: '',
+        email: '',
+        phone: '',
+      },
+      mission: '',
+      description: '',
       focusAreas: [],
     },
   });
@@ -186,6 +209,7 @@ const RegisterNGO = () => {
               <FormControl fullWidth required>
                 <InputLabel>Organization Type</InputLabel>
                 <Select
+                  defaultValue=""
                   label="Organization Type"
                   {...register('organizationType', {
                     required: 'Organization type is required',
@@ -289,7 +313,6 @@ const RegisterNGO = () => {
               <TextField
                 fullWidth
                 label="Country"
-                defaultValue="India"
                 {...register('address.country')}
               />
             </Grid>
